@@ -72,18 +72,52 @@ def check_sudoku(board):
             return False
     return True
 
+encountereds = []
 def solve_sudoku(board):
+    encountereds.append(board)
     if check_sudoku(board):
         return board
     else:
         superposs = get_superposs(board)
         lowscore,locations = get_smallest_poss(superposs)
-        for loc in locations:
+        if lowscore == 0:
+            return False
+        for loc in range(0,81):
             if board[loc] == '0':
                 for trie in superposs[loc]:
                     newboard = board[:loc] + trie + board[loc + 1:]
-                    return try_board(newboard)
-                    
+                    if newboard not in encountereds:
+                        print(newboard)
+                        if solve_sudoku(newboard):
+                            return board
+
+def possible(n,i,board):
+    x,y = get_coords(n)
+    xset = get_horiz_at_x(x, board)
+    yset = get_vert_at_y(y, board)
+    boxset = get_box_at_n(n,board)
+    if i in xset + yset + boxset:
+        return False
+    else:
+        return True
+
+
+def solve2_sudoku():
+    global board
+    for n in range(81):
+        if board[n] == '0':
+            for i in range(1,10):
+                if possible(n,str(i),board):
+                    board = board[:n] + str(i) + board[n + 1:]
+                    solve2_sudoku()
+                    board = board[:n] + '0' + board[n + 1:]
+            return
+    print(board)
+
+stuck = '453921670927345801001876423348152967719430058506798214132689540864203109075014382'
+
 board = "003020600900305001001806400008102900700000008006708200002609500800203009005010300"
 solution = solve_sudoku(board)
 solvedboard = '652781934941532786738946215263174598195368427874295361529617843386459172417823659'
+hardboard = '800000000003600000070090200050007000000045700000100030001000068008500010090000400'
+stuck = '869732541523684970470091283956827104382945706740160839231479068608503017095218400'
