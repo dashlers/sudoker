@@ -13,6 +13,13 @@ board = "00302060090030500100180640000810290070000000800670820000260950080020300
 002 609 500
 800 203 009
 005 010 300
+
+
+012 345 678
+9
+
+
+
 '''
 
 def get_coords(n):
@@ -59,3 +66,34 @@ def get_possibles(n,board):
         if str(i) not in takens:
             result.add(str(i))
     return result
+
+def get_superposs(board):
+    superposs = {}
+    for n in range(0,len(board)):
+        superposs[n] = get_possibles(n,board)
+    return superposs
+
+def get_smallest_poss(superposs):
+    lowscore = 9
+    for i in superposs:
+        if len(superposs[i]) < lowscore:
+            lowscore = len(superposs[i])
+            locations = [i]
+        elif len(superposs[i]) == lowscore:
+            locations.append(i)
+    return (lowscore,locations)
+
+def check_sudoku(board):
+    if "0" in board:
+        return False
+    for i in range(0,9):
+        yset = get_vert_at_y(i, board)
+        xset = get_horiz_at_x(i, board)
+        n = ((i % 3) * 3) + (int(i/3) * 27)
+        boxset = get_box_at_n(n,board)
+        if len(set(xset)) < 9 or len(set(yset)) < 9 or len(set(boxset)) < 9:
+            return False
+    return True
+
+board = "003020600900305001001806400008102900700000008006708200002609500800203009005010300"
+solvedboard = '652781934941532786738946215263174598195368427874295361529617843386459172417823659'
