@@ -1,27 +1,3 @@
-board = "003020600900305001001806400008102900700000008006708200002609500800203009005010300"
-
-
-'''
-003 020 600
-900 305 001
-001 806 400
-
-008 102 900
-700 000 008
-006 708 200
-
-002 609 500
-800 203 009
-005 010 300
-
-
-012 345 678
-9
-
-
-
-'''
-
 def get_coords(n):
     x = n % 9
     y = int(n / 9)
@@ -70,7 +46,8 @@ def get_possibles(n,board):
 def get_superposs(board):
     superposs = {}
     for n in range(0,len(board)):
-        superposs[n] = get_possibles(n,board)
+        if board[n] == '0':
+            superposs[n] = get_possibles(n,board)
     return superposs
 
 def get_smallest_poss(superposs):
@@ -95,5 +72,18 @@ def check_sudoku(board):
             return False
     return True
 
+def solve_sudoku(board):
+    if check_sudoku(board):
+        return board
+    else:
+        superposs = get_superposs(board)
+        lowscore,locations = get_smallest_poss(superposs)
+        for loc in locations:
+            if board[loc] == '0':
+                for trie in superposs[loc]:
+                    newboard = board[:loc] + trie + board[loc + 1:]
+                    return try_board(newboard)
+                    
 board = "003020600900305001001806400008102900700000008006708200002609500800203009005010300"
+solution = solve_sudoku(board)
 solvedboard = '652781934941532786738946215263174598195368427874295361529617843386459172417823659'
